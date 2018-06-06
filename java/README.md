@@ -1,0 +1,1 @@
+# Build and deploy a Java Application to Manawa platform
