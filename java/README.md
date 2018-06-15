@@ -57,21 +57,17 @@ git commit -m "Add dockerfile"
 git push origin master
 ```
 
-### Manawa build configuration 
-
-* Create a project in Manawa and a Manawa build config
-
-```
-oc login -u <CLUSTER_USERNAME> -p <CLUSTER_PASSWORD> <CLUSTER_URL>
-oc new-project <PROJECT_NAME>
-oc new-build --docker-image=bucharestgold/centos7-s2i-nodejs:latest --binary=true --name=node-openshift-ex
-```
-
 ### CircleCI configuration
 
 Now we are going to add a deployment step in your existing pipeline to deploy your application on Manawa each time an update is pushed to Github.
+The deployment will execute the following steps :
+* Init project in Manawa platform
+* Build docker image for your app
+* Deploy your application in Manawa based on the previously built docker image
 
-* Copy the file `circleci/config-cd.yml` and replace your existing file : `.circleci/config.yml`
+You can find the needed configuration files in `step3` directory
+
+* Copy the directory `.circleci` in your project : `.circleci/config.yml`
 * Configure CircleCI and add the environment variables needed by the CircleCI configuration file. 
 
 *From the home page of CircleCI:*
@@ -98,18 +94,6 @@ git add .circleci/config.yml
 git commit -m "Add deployment step"
 git push origin master
 ```
-
-
-### Manawa app creation 
-
-* In the previous section (CircleCI Configuration) we pushed a CircleCI config file to Github. The **oc commands** included in the CircleCI config file allowed us to push our source code to Manawa. 
-To deploy the application using the source code uploaded it is necessary to create an application.
-
-```
-oc new-app node-openshift-ex
-```
-
-
 
 ### Test the Continuous Deployment
 

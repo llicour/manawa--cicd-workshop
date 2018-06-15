@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: marem-helloworld
+spec:
+  host: marem-helloworld-devweek-marem.apps.manawa.dev.adeo.cloud
+  path: /
+  to:
+    kind: Service
+    name: marem-helloworld
+  wildcardPolicy: None
+status:
+  ingress:
+  - conditions:
+    host: marem-helloworld-devweek-marem.apps.manawa.dev.adeo.cloud
+    routerName: router
+    wildcardPolicy: None
