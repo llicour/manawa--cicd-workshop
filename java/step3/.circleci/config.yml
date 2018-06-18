@@ -1,34 +1,82 @@
 version: 2
 jobs:
-  build:    
-    working_directory: ~/repo
+    build:
+        docker:
+            - image: circleci/openjdk
 
-    docker:
-      - image: marem/circleci-openjdk-oc
+        steps:
+            - checkout
 
-    steps:
-      - checkout
+            - restore_cache:
+                key: circleci-hello-world-{{ checksum "pom.xml" }}
+            
+            - run: mvn dependency:go-offline
+            
+            - save_cache:
+                paths:
+                    - ~/.m2
+                key: circleci-hello-world-{{ checksum "pom.xml" }}
+            
+            - run: mvn package
+            
+            - store_test_results:
+                path: target/surefire-reports
+            
+            - store_artifacts:
+                path: target/hello-world-0.1.0.jar
+            
+            - persist_to_workspace:
+                root: ~/project
+                paths:
+                    - target/hello-world-0.1.0.jar
+            
+    deploy:        
+        machine: true
+            
+        steps:
+            - checkout
 
-      - restore_cache:
-          key: circleci-hello-world-{{ checksum "pom.xml" }}
-      
-      - run: mvn dependency:go-offline
-      
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: circleci-hello-world-{{ checksum "pom.xml" }}
-      
-      - run: mvn package
-      
-      - store_test_results:
-          path: target/surefire-reports
-      
-      - store_artifacts:
-          path: target/hello-world-0.1.0.jar
+            - attach_workspace:
+                at: ~/project
+            
+            - run:
+                name: Configure docker daemon
+                command: |
+                    echo "{\"insecure-registries\": [\"${DOCKER_REGISTRY_URL}\"]}" | sudo tee /etc/docker/daemon.json
+                    sudo service docker restart
 
-      - deploy: 
-          command: |
-              sh deploy.sh
+            - run:
+                name: Install oc client
+                command: |
+                    wget https://github.com/openshift/origin/releases/download/v3.9.0/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz
+                    tar xvf openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz
+                    sudo mv openshift-origin-client-tools-v3.9.0-191fece-linux-64bit/oc /usr/bin/oc
+            
+            - run:
+                name: "Create Manawa project"
+                command: |
+                    sh oc-create.sh
 
+            - run:
+                name: "Build and push docker image"
+                command: |
+                    docker build -t ${DOCKER_REGISTRY_URL}/${PROJECT_NAME}/hello-world:latest .
+                    docker login -u ${CLUSTER_USERNAME} -p $(oc whoami -t) ${DOCKER_REGISTRY_URL}
+                    docker push ${DOCKER_REGISTRY_URL}/${PROJECT_NAME}/hello-world:latest
+                    
+            - run:
+                name: "Sync Kubernetes objects"
+                command: |
+                    oc apply -f kubernetes/hello-world-deployment.yml
+                    oc apply -f kubernetes/hello-world-service.yml
+                    oc apply -f kubernetes/hello-world-route.yml
 
+            
+workflows:
+    version: 2
+    build_and_deploy:
+        jobs:
+            - build
+            - deploy:
+                requires: 
+                    - build

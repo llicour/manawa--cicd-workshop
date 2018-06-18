@@ -1,20 +1,33 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
+kind: DeploymentConfig
+apiVersion: v1
 metadata:
-  name: hello-world
+  name: marem-helloworld
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      app: hello-world
   template:
     metadata:
       labels:
         app: hello-world
     spec:
       containers:
-      - name: hello-world
-        image: docker-registry.default.svc:5000/devweek-marem/hello-world
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 80
+        - name: hello-world
+          image: devweek-marem/hello-world
+          ports:
+            - containerPort: 80
+  selector:
+    app: hello-world
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange 
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - hello-world
+        from:
+          kind: ImageStreamTag
+          name: hello-world:latest
+  strategy: 
+    type: Rolling
+  paused: false 
+  revisionHistoryLimit: 2 
+  minReadySeconds: 0
