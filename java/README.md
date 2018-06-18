@@ -177,11 +177,25 @@ Here is the list of the needed variables :
 First, configure these vars in CircleCI :
 
 * Click on your project settings button from the homepage :
-![Settings button](./step3/screens/circle-settings-button.png)
+![Settings button](./step3/screens/circleci-settings-button.png)
 
 ![Link to environement variables](./step3/screens/circleci-variables-link.png)
 
 ![Environnement variables list](./step3/screens/circleci-variables.png)
+
+The workflow definition also need the following files to be executed normaly :
+* oc-create.sh shell script to automatically create your manawa project
+* kubernetes yaml files : will be applied on manawa to create the deployment, service and route for your project
+
+Copy these files in your project :
+
+```
+cp java/step3/oc-create.sh <path>/hello-world
+cp -r java/step3/kubernetes <path>/hello-world
+cd <path>/hello-world
+git add kubernetes oc-create.sh
+git commit -m "Add deployment step"
+```
 
 Then update your cicleci config :
 ```shell
