@@ -48,15 +48,15 @@ You now have a valid continuous integration pipeline that will build and deploy 
 
 ## Step 3 : Continuous deployment
 
-### Manawa build configuration 
+### Manawa build configuration
 
 * Create a project in Manawa and a Manawa build config
 
-> Please name your project like this: devweek-<your_ldap_username>-hello-world-node (e.g. 'devweek-2000xxxx-hello-world-node) 
+> Please name your project like this: devweek-<your_ldap_username>-hello-world-node (e.g. 'devweek-2000xxxx-hello-world-node)
 
 ```
 oc login -u <CLUSTER_USERNAME> -p <CLUSTER_PASSWORD> <CLUSTER_URL>
-oc new-project <PROJECT_NAME> 
+oc new-project <PROJECT_NAME>
 oc new-build --docker-image=bucharestgold/centos7-s2i-nodejs:latest --binary=true --name=hello-world-node
 ```
 
@@ -65,7 +65,7 @@ oc new-build --docker-image=bucharestgold/centos7-s2i-nodejs:latest --binary=tru
 Now we are going to add a deployment step in your existing pipeline to deploy your application on Manawa each time an update is pushed to Github.
 
 * Copy the file `.circleci/config.yml` and replace your existing file : `.circleci/config.yml`
-* Configure CircleCI and add the environment variables needed by the CircleCI configuration file. 
+* Configure CircleCI and add the environment variables needed by the CircleCI configuration file.
 
 *From the home page of CircleCI:*
 
@@ -93,20 +93,24 @@ git push origin master
 ```
 
 
-### Manawa app creation 
+### Manawa app creation
 
-* In the previous section (CircleCI Configuration) we pushed a CircleCI config file to Github. The **oc commands** included in the CircleCI config file allowed us to push our source code to Manawa. 
+* In the previous section (CircleCI Configuration) we pushed a CircleCI config file to Github. The **oc commands** included in the CircleCI config file allowed us to push our source code to Manawa.
 To deploy the application using the source code uploaded it is necessary to create an application.
 
 ```
 oc new-app hello-world-node
 ```
 
+* It's necessary to create a route in order to access to your application. You can simply use the command below :
 
+```
+oc expose svc/hello-world-node
+```
 
 ### Test the Continuous Deployment
 
-* Edit this file to 
+* Edit this file to
 
 ```shell
 git add .circleci/
@@ -118,7 +122,7 @@ git push origin master
 <h1>Welcome to your Node.js application on OpenShift</h1>
 ```
 
-by 
+by
 ```html
 <h1>Welcome to <your_username> Node.js application on OpenShift</h1>
 ```
