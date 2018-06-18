@@ -89,7 +89,7 @@ You now have a valid continuous integration pipeline that will build and deploy 
 ## Step 3 : Continuous deployment
 
 In this step we will complete the CircleCI configuration to trigger a deployment on manawa platform on each code change. Deployment consists on the following steps :
-* Build a new jar containing the code change (already done in step2)
+* Test and Build a new jar containing the code change (already done in step2)
 * Build a docker image enclosing the modified jar
 * create/update manawa project and configuration
 * Push the image on manawa registry (the new image will trigger a redeploy on manawa)
@@ -109,40 +109,89 @@ git push origin master
 
 Now we are going to add a deployment step in your existing pipeline to deploy your application on Manawa each time an update is pushed to Github.
 The deployment will execute the following steps :
-* Init project in Manawa platform
+* Init project in Manawa platform with a valid url
 * Build docker image for your app
 * Deploy your application in Manawa based on the previously built docker image
 
 You can find the needed configuration files in `step3` directory
 
-* Copy the directory `.circleci` in your project : `.circleci/config.yml`
-* Configure CircleCI and add the environment variables needed by the CircleCI configuration file. 
+* You'll have to update your `.circleci` config with `step3/.circleci/config.yml`. This new configuration now contains 2 jobs :
+** build job (nearly the same as in step2)
+** deploy job (new) : the deploy job builds the docker image, push it in the docker registry and create/update the openshift project.
+* (read the config.yml file in detail to check all the steps)
+* The 2 jobs are linked by a CircleCI `workflow` definition :
 
-*From the home page of CircleCI:*
+```yaml
+version: 2
+jobs:
+    build:
+        ...
+            
+    deploy:        
+        machine: true
+            
+        steps:
+            - checkout
+            ...           
+            - run:
+                name: Configure docker daemon
+                ...
 
-![Settings button](./step3/screens/settings-button.png)
+            - run:
+                name: Install oc client
+                ...
+            
+            - run:
+                name: "Create Manawa project"
+                ...
 
-![Link to environement variables](./step3/screens/environment-variables-link.png)
+            - run:
+                name: "Build and push docker image"
+                ...
+                    
+            - run:
+                name: "Sync Kubernetes objects"
+                ...
 
-> Set the following variables:
-> * APP_NAME --> Name your application `node-openshift-ex`
-> * PROJECT_NAME --> Create a name for your project. We will need it later. Prefix it with `devweek-`. Please note that your project name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'devweek-my-name',  or 'devweek-123-abc') 
-> * CLUSTER_URL
-> * CLUSTER_USERNAME
-> * CLUSTER_PASSWORD
-> * DOCKER_REGISTRY_URL
+            
+workflows:
+    version: 2
+    build_and_deploy:
+        jobs:
+            - build
+            - deploy:
+                requires: 
+                    - build
 
-![Environement variables](./step3/screens/environment-variables.png)
+```
 
+The new CircleCI workflow definition use some variables to parameter your build.
 
-* Push CircleCI configuration to github
+Here is the list of the needed variables :
+> * PROJECT_NAME        --> Name of the project that will be created in Manawa. Should be unique in Manawa platform. Prefix it with `devweek-` and use your name in it, so that it is unique. Please note that your project name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'devweek-my-name',  or 'devweek-123-abc') 
+> * CLUSTER_URL         --> Manawa cluster Url
+> * CLUSTER_USERNAME    --> Your username to login to manawa cluster
+> * CLUSTER_PASSWORD    --> Your password to login to manawa cluster
+> * DOCKER_REGISTRY_URL --> Manawa internal docker registry
 
+First, configure these vars in CircleCI :
 
+* Click on your project settings button from the homepage :
+![Settings button](./step3/screens/circle-settings-button.png)
+
+![Link to environement variables](./step3/screens/circleci-variables-link.png)
+
+![Environnement variables list](./step3/screens/circleci-variables.png)
+
+Then update your cicleci config :
 ```shell
-git add .circleci/config.yml
+cp -r java/step3/.circleci/config.yml <path>/hello-world/.circleci/
+cd <path>/hello-world
+git add .circleci
 git commit -m "Add deployment step"
 git push origin master
 ```
+This should trigger a new build and deploy workflow.
 
 ### Test the Continuous Deployment
 
