@@ -52,7 +52,7 @@ You now have a valid continuous integration pipeline that will build and deploy 
 
 * Create a project in Manawa and a Manawa build config
 
-> Please name your project like this: devweek-<your_ldap>-hello-world-node (e.g. 'devweek-2000xxxx-hello-world-node) 
+> Please name your project like this: devweek-<your_ldap_username>-hello-world-node (e.g. 'devweek-2000xxxx-hello-world-node) 
 
 ```
 oc login -u <CLUSTER_USERNAME> -p <CLUSTER_PASSWORD> <CLUSTER_URL>
@@ -74,8 +74,8 @@ Now we are going to add a deployment step in your existing pipeline to deploy yo
 ![Link to environement variables](./Tutorial/screens/environment-variables-link.png)
 
 > Set the following variables:
-> * APP_NAME --> Name your application `node-openshift-ex`
-> * PROJECT_NAME --> Like before name your project like this: devweek-<your_ldap>-hello-world-node
+> * APP_NAME --> Name your application `hello-world-node`
+> * PROJECT_NAME --> Like before name your project like this: devweek-<your_ldap_username>-hello-world-node
 > * CLUSTER_URL
 > * CLUSTER_USERNAME
 > * CLUSTER_PASSWORD
