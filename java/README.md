@@ -2,12 +2,17 @@
 
 * SCM             : github (https://github.com)
 * CICD platform   : CircleCI (https://circleci.com)
-* Docker registry : Quay (https://quay.io/)
-* PAAS            : https://master.manawa.dev.adeo.cloud/console/
+* Docker registry : Manawa docker registry (https://registry-console-default.apps.manawa.dev.adeo.cloud)
+* PAAS            : Manawa (https://master.manawa.dev.adeo.cloud/console/)
+
+## Prerequisites
+
+* A Github account
+* Git installed on your laptop
 
 ## Step 1 : Init your Github repo
 1. Create a new `hello-world` repo on your github account
-2. Copy our sample `hello-world` application somewhere on your filesystem, then init and push your git repo :
+2. Copy our sample `hello-world` application from `java/step1` directory and paste it somewhere on your filesystem. Then init and push your git repo :
 
 ```shell
 cp -r java/step1/hello-world <path>
@@ -34,6 +39,9 @@ git commit -m "Add CircleCI configuration"
 git push origin master
 ```
 
+The CircleCI yaml file is needed by CircleCI to identify your project as importable. This config describe the pipeline steps that will be executed during the job.
+To configure circleci to build your github projet :
+
 * Create your CircleCI account
 * Build your project
 * You should see an output similar to this :
@@ -45,6 +53,12 @@ You now have a valid continuous integration pipeline that will build and deploy 
 
 
 ## Step 3 : Continuous deployment
+
+In this step we will complete the CircleCI configuration to trigger a deployment on manawa platform on each code change. Deployment consists on the following steps :
+* Build a new jar containing the code change (already done in step2)
+* Build a docker image enclosing the modified jar
+* create/update manawa project and configuration
+* Push the image on manawa registry (the new image will trigger a redeploy on manawa)
 
 ### Docker
 
@@ -82,6 +96,7 @@ You can find the needed configuration files in `step3` directory
 > * CLUSTER_URL
 > * CLUSTER_USERNAME
 > * CLUSTER_PASSWORD
+> * DOCKER_REGISTRY_URL
 
 ![Environement variables](./Tutorial/screens/environment-variables.png)
 
@@ -104,17 +119,23 @@ git add circleci/
 git commit -m "Update CircleCI configuration to deploy on manawa"
 git push origin master
 ```
-* Edit the page : `views/index.html`, l. 219 replace :
-```html
-<h1>Welcome to your Node.js application on OpenShift</h1>
+* Edit the java src : `vim src/main/java/com/dockerforjavadevelopers/hello/HelloController.java`, l. 12 replace :
+```java
+return "Welcome to the devweek !\n";
 ```
 
 by 
-```html
-<h1>Welcome to <your_username> Node.js application on OpenShift</h1>
+```java
+return "Welcome to the devweek <your_username> !\n";
 ```
 
 ```shell
-git commit -m "Update view index.html to display my username"
+git commit -m "Update view HelloController to display my username"
 git push origin master
 ```
+
+Then check the following :
+* A new worfklow should be triggered in CircleCI
+* When the CircleCI workflow is ended, a new deployment is triggered in Manawa
+* When the deployment in Manawa is finished, refresh your browser to visualize your changes !
+
