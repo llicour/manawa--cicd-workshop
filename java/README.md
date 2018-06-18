@@ -1,5 +1,9 @@
 # Build a CI/CD pipeline for a Java application using imageStream
 
+In this workshop, we will deploy a java application to Manawa platform with CI/CD using CircleCI.
+The application code will be hosted in a Github repository.
+
+So here are the services involved fro this worshop :
 * SCM             : github (https://github.com)
 * CICD platform   : CircleCI (https://circleci.com)
 * Docker registry : Manawa docker registry (https://registry-console-default.apps.manawa.dev.adeo.cloud)
@@ -7,20 +11,20 @@
 
 ## Prerequisites
 
-* A Github account
 * Git installed on your laptop
+* A Github account
 
 ## Step 1 : Init your Github repo
-1. Create a new `hello-world` repo on your github account
+1. Create a new `hello-world-java` repo on your github account
 2. Copy our sample `hello-world` application from `java/step1` directory and paste it somewhere on your filesystem. Then init and push your git repo :
 
 ```shell
 cp -r java/step1/hello-world <path>
 cd <path>/hello-world
 git init
-git add pom.xml src/
+git add pom.xml src/ .gitignore
 git commit -m "first commit"
-git remote add origin https://github.com/<your_username>/hello-world.git
+git remote add origin https://github.com/<your_username>/hello-world-java.git
 git push origin master
 ```
 
@@ -40,13 +44,39 @@ git push origin master
 ```
 
 The CircleCI yaml file is needed by CircleCI to identify your project as importable. This config describe the pipeline steps that will be executed during the job.
+
+
 To configure circleci to build your github projet :
 
 * Create your CircleCI account
-* Build your project
-* You should see an output similar to this :
+* Setup your project
 
-![Link to environement variaghbles](./Tutorial/screens/circleci-success.png)
+![CircleCI-setup-project](./step2/screens/circleci-setup-project.png)
+
+* Build your project. You should see an output similar to this :
+
+![CircleCI-build](./step2/screens/circleci-build.png)
+
+This job will pull the sources from GitHub and install it as a maven project using docker openjdk-8 image according to the yaml configuration embedded in your project :
+
+```yaml
+version: 2
+jobs:
+  build:    
+    working_directory: ~/repo
+
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+
+    steps:
+      - checkout
+
+      ...
+      
+      - run: mvn install
+      
+      ...
+```
 
 
 You now have a valid continuous integration pipeline that will build and deploy your code on Manawa each time you push an update to github.
@@ -86,9 +116,9 @@ You can find the needed configuration files in `step3` directory
 
 *From the home page of CircleCI:*
 
-![Settings button](./Tutorial/screens/settings-button.png)
+![Settings button](./step3/screens/settings-button.png)
 
-![Link to environement variables](./Tutorial/screens/environment-variables-link.png)
+![Link to environement variables](./step3/screens/environment-variables-link.png)
 
 > Set the following variables:
 > * APP_NAME --> Name your application `node-openshift-ex`
@@ -98,7 +128,7 @@ You can find the needed configuration files in `step3` directory
 > * CLUSTER_PASSWORD
 > * DOCKER_REGISTRY_URL
 
-![Environement variables](./Tutorial/screens/environment-variables.png)
+![Environement variables](./step3/screens/environment-variables.png)
 
 
 * Push CircleCI configuration to github
