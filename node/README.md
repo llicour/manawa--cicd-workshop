@@ -57,7 +57,7 @@ You now have a valid continuous integration pipeline that will build and deploy 
 ```
 oc login -u <CLUSTER_USERNAME> -p <CLUSTER_PASSWORD> <CLUSTER_URL>
 oc new-project <PROJECT_NAME>
-oc new-build --docker-image=bucharestgold/centos7-s2i-nodejs:latest --binary=true --name=hello-world-node
+oc new-build --docker-image=registry.hub.docker.com/ryanj/centos7-s2i-nodejs:current --binary=true --name=hello-world-node
 ```
 
 ### CircleCI configuration
@@ -110,13 +110,6 @@ oc expose svc/hello-world-node
 
 ### Test the Continuous Deployment
 
-* Edit this file to
-
-```shell
-git add .circleci/
-git commit -m "Update CircleCI configuration to deploy on manawa"
-git push origin master
-```
 * Edit the page : `views/index.html`, l. 219 replace :
 ```html
 <h1>Welcome to your Node.js application on OpenShift</h1>
