@@ -53,7 +53,11 @@ To configure circleci to build your github projet :
 
 ![CircleCI-setup-project](./step2/screens/circleci-setup-project.png)
 
-* Build your project. You should see an output similar to this :
+* Build your project. As your project contains a valid `.circleci/config.yml` you can directly click on the 'start building' button :
+
+![CircleCI-start-build](./step2/screens/circleci-start-build.png)
+
+* You should see an output similar to this :
 
 ![CircleCI-build](./step2/screens/circleci-build.png)
 
