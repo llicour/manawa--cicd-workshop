@@ -194,7 +194,7 @@ cp java/step3/oc-create.sh <path>/hello-world
 cp -r java/step3/kubernetes <path>/hello-world
 cd <path>/hello-world
 git add kubernetes oc-create.sh
-git commit -m "Add deployment step"
+git commit -m "Kubernetes object definitions"
 ```
 
 Then update your cicleci config :
@@ -209,13 +209,9 @@ This should trigger a new build and deploy workflow.
 
 ### Test the Continuous Deployment
 
-* Edit this file to 
+All our CI/CD workflow is now fully setuped. How do we check everithing is fine ?
+Just push a code change and check that it is deployed.
 
-```shell
-git add circleci/
-git commit -m "Update CircleCI configuration to deploy on manawa"
-git push origin master
-```
 * Edit the java src : `vim src/main/java/com/dockerforjavadevelopers/hello/HelloController.java`, l. 12 replace :
 ```java
 return "Welcome to the devweek !\n";
@@ -231,7 +227,7 @@ git commit -m "Update view HelloController to display my username"
 git push origin master
 ```
 
-Then check the following :
+Then check the that the steps run fine :
 * A new worfklow should be triggered in CircleCI
 * When the CircleCI workflow is ended, a new deployment is triggered in Manawa
 * When the deployment in Manawa is finished, refresh your browser to visualize your changes !
