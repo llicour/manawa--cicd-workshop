@@ -1,5 +1,5 @@
 # Login to manawa
-oc login -u ${CLUSTER_USERNAME} -p ${CLUSTER_PASSWORD} ${CLUSTER_URL}
+oc login -u ${CLUSTER_USERNAME} -p ${CLUSTER_PASSWORD} ${CLUSTER_URL} --insecure-skip-tls-verify
 
 # Create or select project in manawa
 {

@@ -169,9 +169,9 @@ The new CircleCI workflow definition use some variables to parameter your build.
 
 Here is the list of the needed variables :
 > * PROJECT_NAME        --> Name of the project that will be created in Manawa. Should be unique in Manawa platform. Prefix it with `devweek-` and use your name in it, so that it is unique. Please note that your project name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'devweek-my-name',  or 'devweek-123-abc') 
-> * CLUSTER_URL         --> Manawa cluster Url
-> * CLUSTER_USERNAME    --> Your username to login to manawa cluster
-> * CLUSTER_PASSWORD    --> Your password to login to manawa cluster
+> * CLUSTER_URL         --> https://manawa.euw1-gcp-poc.adeo.cloud/
+> * CLUSTER_USERNAME    --> Your LDAP username
+> * CLUSTER_PASSWORD    --> Your LDAP password
 > * DOCKER_REGISTRY_URL --> Manawa internal docker registry
 
 First, configure these vars in CircleCI :

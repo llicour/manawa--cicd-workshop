@@ -3,7 +3,9 @@ kind: Route
 metadata:
   name: hello-world
 spec:
-  host: hello-world-__PROJECT_NAME__.manawa.euw1-gcp-poc.adeo.cloud
+  host: hello-world-__PROJECT_NAME__.euw1-gcp-poc.adeo.cloud
+  tls:
+    termination: edge
   path: /
   to:
     kind: Service
@@ -12,7 +14,6 @@ spec:
 status:
   ingress:
   - conditions:
-    host: hello-world-__PROJECT_NAME__.manawa.euw1-gcp-poc.adeo.cloud
+    host: hello-world-__PROJECT_NAME__.euw1-gcp-poc.adeo.cloud
     routerName: router
     wildcardPolicy: None
-
