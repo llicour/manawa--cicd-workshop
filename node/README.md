@@ -10,6 +10,8 @@
 2. Copy our sample `hello-world-node` application from `node/step1` directory and paste it somewhere on your filesystem. Then init and push your git repo :
 
 ```shell
+git clone https://github.com/adeo/manawa--cicd-workshop/
+cd manawa--cicd-workshop/
 cp -r node/step1/hello-world-node <path>
 cd <path>/hello-world-node
 git init
@@ -64,7 +66,12 @@ oc new-build --docker-image=registry.hub.docker.com/ryanj/centos7-s2i-nodejs:cur
 
 Now we are going to add a deployment step in your existing pipeline to deploy your application on Manawa each time an update is pushed to Github.
 
-* Copy the file `.circleci/config.yml` and replace your existing file : `.circleci/config.yml`
+* Copy the file `.circleci/config.yml` from the step3 directory and replace your existing file : `.circleci/config.yml`
+
+```shell
+cp -r node/step3/.circleci/config.yml <path>/hello-world-node/.circleci/
+```
+
 * Configure CircleCI and add the environment variables needed by the CircleCI configuration file.
 
 *From the home page of CircleCI:*
@@ -76,9 +83,9 @@ Now we are going to add a deployment step in your existing pipeline to deploy yo
 > Set the following variables:
 > * APP_NAME --> Name your application `hello-world-node`
 > * PROJECT_NAME --> Like before name your project like this: devweek-<your_ldap_username>-hello-world-node
-> * CLUSTER_URL
-> * CLUSTER_USERNAME
-> * CLUSTER_PASSWORD
+> * CLUSTER_URL --> https://manawa.euw1-gcp-poc.adeo.cloud/
+> * CLUSTER_USERNAME --> Your LDAP username 
+> * CLUSTER_PASSWORD --> Your LDAP password
 
 ![Environement variables](./Tutorial/screens/environment-variables.png)
 
@@ -95,17 +102,16 @@ git push origin master
 
 ### Manawa app creation
 
-* In the previous section (CircleCI Configuration) we pushed a CircleCI config file to Github. The **oc commands** included in the CircleCI config file allowed us to push our source code to Manawa.
-To deploy the application using the source code uploaded it is necessary to create an application.
+* In the previous section (CircleCI Configuration) we pushed a CircleCI config file to Github. The **oc commands** included in the CircleCI config file and executed pushed our source code to Manawa. The source code is stored. We can now use it to deploy an application on Manawa. Let's create an application...
 
 ```
 oc new-app hello-world-node
 ```
 
-* It's necessary to create a route in order to access to your application. You can simply use the command below :
+* It's necessary to create a HTTPS route in order to access to your application. You can simply use the command below :
 
 ```
-oc expose svc/hello-world-node
+oc create route edge --service=hello-world-node
 ```
 
 ### Test the Continuous Deployment
