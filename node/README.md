@@ -2,8 +2,7 @@
 
 * SCM             : github (https://github.com)
 * CICD platform   : CircleCI (https://circleci.com)
-* Docker registry : Quay (https://quay.io/)
-* PAAS            : https://master.manawa.dev.adeo.cloud/console/
+* PAAS            : https://manawa.euw1-gcp-poc.adeo.cloud/console/
 
 
 ## Prerequisite :
