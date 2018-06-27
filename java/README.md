@@ -172,7 +172,7 @@ Here is the list of the needed variables :
 > * CLUSTER_URL         --> https://manawa.euw1-gcp-poc.adeo.cloud/
 > * CLUSTER_USERNAME    --> Your LDAP username
 > * CLUSTER_PASSWORD    --> Your LDAP password
-> * DOCKER_REGISTRY_URL --> Manawa internal docker registry
+> * DOCKER_REGISTRY_URL --> docker-registry-default.euw1-gcp-poc.adeo.cloud
 
 First, configure these vars in CircleCI :
 
